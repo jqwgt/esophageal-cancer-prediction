@@ -1,114 +1,125 @@
-prediction.html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Esophageal Cancer Prediction | 食管癌预测</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>食管癌智能预测系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0055a5;
-            --primary-light: #e6f0fa;
-            --accent-color: #00a0d2;
-            --text-dark: #333;
-            --text-light: #666;
-            --white: #fff;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
+            --primary-color: #2A5CAA;
+            --secondary-color: #4A90E2;
+            --accent-color: #FF6B6B;
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+            --bg-overlay: rgba(255, 255, 255, 0.9);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background: url('bg.jpg') no-repeat center center fixed; 
+            background: url('bg.jpg') no-repeat center center fixed;
             background-size: cover;
-            padding: 0;
-            margin: 0;
+            min-height: 100vh;
             position: relative;
         }
 
-        /* 添加背景遮罩，以确保内容可读性 */
-        body::before {
-            content: '';
+        .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.85); /* 半透明白色遮罩 */
-            z-index: -1;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 998;
+            display: none;
         }
 
         header {
-            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
-            color: var(--white);
-            padding: 1.5rem 0;
-            box-shadow: var(--box-shadow);
+            background: var(--bg-overlay);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 999;
         }
 
         .container {
-            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1.5rem;
+            padding: 0 2rem;
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 80px;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 500;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
         }
 
         .language-switch {
-            background-color: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
             border-radius: 24px;
-            padding: 6px 12px;
-            font-size: 0.875rem;
+            background: rgba(42, 92, 170, 0.1);
+            color: var(--primary-color);
             cursor: pointer;
             transition: var(--transition);
         }
 
         .language-switch:hover {
-            background-color: rgba(255, 255, 255, 0.25);
+            background: rgba(42, 92, 170, 0.2);
         }
 
         main {
-            padding: 3rem 0;
+            padding: 4rem 0;
+            position: relative;
+            z-index: 997;
         }
 
-        .card {
-            background-color: var(--white);
+        .prediction-card {
+            background: var(--bg-overlay);
+            backdrop-filter: blur(8px);
             border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
             overflow: hidden;
-            margin-bottom: 2rem;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: cardEnter 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes cardEnter {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .card-header {
-            background-color: var(--primary-light);
-            padding: 1.5rem;
+            padding: 2rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, rgba(42, 92, 170, 0.08), rgba(74, 144, 226, 0.04));
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: var(--primary-color);
-            font-weight: 500;
-            margin: 0;
+            font-weight: 600;
         }
 
         .card-body {
@@ -116,251 +127,230 @@ prediction.html
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             font-weight: 500;
             color: var(--text-dark);
+            font-size: 0.95rem;
         }
 
-        input, select {
+        .input-field {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e0e0e0;
-            border-radius: var(--border-radius);
+            padding: 12px 16px;
+            border: 2px solid rgba(42, 92, 170, 0.15);
+            border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
+            background: rgba(255, 255, 255, 0.8);
         }
 
-        input:focus, select:focus {
+        .input-field:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
             outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.1);
+            background: white;
         }
 
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
         }
 
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 0.875rem 1.75rem;
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
             border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
-            text-align: center;
+            box-shadow: 0 4px 12px rgba(42, 92, 170, 0.2);
         }
 
-        .btn:hover {
-            background-color: #004080;
+        .submit-btn:hover {
             transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-        }
-
-        .btn-block {
-            display: block;
-            width: 100%;
+            box-shadow: 0 6px 16px rgba(42, 92, 170, 0.3);
         }
 
         .result-section {
-            display: none;
             margin-top: 2rem;
             padding: 2rem;
-            background-color: var(--primary-light);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: var(--border-radius);
-            animation: fadeIn 0.5s ease-in-out;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: var(--transition);
         }
 
-        .result-header {
-            font-size: 1.25rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
+        .result-section.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .result-value {
-            font-size: 2.5rem;
+        .risk-gauge {
+            height: 24px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .gauge-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #4CAF50, #FFC107, #F44336);
+            border-radius: 12px;
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .risk-percentage {
+            font-size: 2.8rem;
             font-weight: 700;
             color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .result-note {
-            color: var(--text-light);
-            font-style: italic;
-        }
-
-        .result-gauge {
-            height: 30px;
-            background-color: #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 1rem 0;
-            position: relative;
-        }
-
-        .result-gauge-fill {
-            height: 100%;
-            background: linear-gradient(to right, #5cb85c, #f0ad4e, #d9534f);
-            border-radius: 15px;
-            transition: width 1s ease-in-out;
-        }
-
-        .disclaimer {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: rgba(0, 0, 0, 0.02);
-            border-radius: var(--border-radius);
-            font-size: 0.875rem;
-            color: var(--text-light);
+            text-align: center;
+            margin: 1.5rem 0;
         }
 
         footer {
-            background-color: #333;
-            color: rgba(255, 255, 255, 0.7);
+            background: var(--bg-overlay);
+            backdrop-filter: blur(8px);
+            margin-top: 4rem;
             padding: 2rem 0;
-            font-size: 0.875rem;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 0 1.5rem;
             }
             
             .card-body {
                 padding: 1.5rem;
             }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="overlay" id="overlay"></div>
+
     <header>
         <div class="container">
             <div class="header-content">
-                <h1 class="logo" data-en="Esophageal Cancer Prediction Tool" data-zh="食管癌预测工具">Esophageal Cancer Prediction Tool</h1>
-                <div class="language-switch" id="langSwitch" data-en="中文" data-zh="English">中文</div>
+                <div class="logo" data-en="Esophageal Cancer AI Predictor" data-zh="食管癌智能预测系统">食管癌智能预测系统</div>
+                <div class="language-switch" id="langSwitch" data-en="中文" data-zh="EN">EN</div>
             </div>
         </div>
     </header>
 
     <main>
         <div class="container">
-            <div class="card">
+            <div class="prediction-card">
                 <div class="card-header">
-                    <h2 class="card-title" data-en="Esophageal Cancer Prediction" data-zh="食管癌预测">Esophageal Cancer Prediction</h2>
+                    <h1 class="card-title" data-en="Risk Prediction Analysis" data-zh="风险预测分析">风险预测分析</h1>
                 </div>
                 <div class="card-body">
                     <form id="predictionForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="age" data-en="Age" data-zh="年龄">Age</label>
-                                <input type="number" id="age" name="age" min="18" max="120" required>
+                                <label for="age" data-en="Age" data-zh="患者年龄">患者年龄</label>
+                                <input type="number" class="input-field" id="age" min="18" max="100" required>
                             </div>
                             <div class="form-group">
-                                <label for="gender" data-en="Gender" data-zh="性别">Gender</label>
-                                <select id="gender" name="gender" required>
-                                    <option value="" data-en="Select" data-zh="请选择">Select</option>
-                                    <option value="male" data-en="Male" data-zh="男性">Male</option>
-                                    <option value="female" data-en="Female" data-zh="女性">Female</option>
+                                <label for="gender" data-en="Gender" data-zh="患者性别">患者性别</label>
+                                <select class="input-field" id="gender" required>
+                                    <option value="" data-en="Please select" data-zh="请选择性别">请选择性别</option>
+                                    <option value="male" data-en="Male" data-zh="男性">男性</option>
+                                    <option value="female" data-en="Female" data-zh="女性">女性</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 其他表单字段保持类似结构 -->
+                        <!-- 在之前的form标签内补充以下内容 -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ecog" data-en="ECOG Performance Status" data-zh="ECOG评分">ECOG评分</label>
+                                <select class="input-field" id="ecog" required>
+                                    <option value="" data-en="Please select" data-zh="请选择">请选择</option>
+                                    <option value="0" data-en="0 - Fully active" data-zh="0 - 活动能力完全正常">0 - 活动能力完全正常</option>
+                                    <option value="1" data-en="1 - Restricted but ambulatory" data-zh="1 - 受限但可行走">1 - 受限但可行走</option>
+                                    <option value="2" data-en="2 - Ambulatory, capable of self-care" data-zh="2 - 可行走，能自理">2 - 可行走，能自理</option>
+                                    <option value="3" data-en="3 - Limited self-care" data-zh="3 - 有限自理能力">3 - 有限自理能力</option>
+                                    <option value="4" data-en="4 - Completely disabled" data-zh="4 - 完全残疾">4 - 完全残疾</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="stage" data-en="Tumor Stage" data-zh="肿瘤分期">肿瘤分期</label>
+                                <select class="input-field" id="stage" required>
+                                    <option value="" data-en="Please select" data-zh="请选择">请选择</option>
+                                    <option value="I" data-en="Stage I" data-zh="I期">I期</option>
+                                    <option value="II" data-en="Stage II" data-zh="II期">II期</option>
+                                    <option value="III" data-en="Stage III" data-zh="III期">III期</option>
+                                    <option value="IV" data-en="Stage IV" data-zh="IV期">IV期</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="ecog" data-en="ECOG Performance Status" data-zh="ECOG评分">ECOG Performance Status</label>
-                                <select id="ecog" name="ecog" required>
-                                    <option value="" data-en="Select" data-zh="请选择">Select</option>
-                                    <option value="0" data-en="0 - Fully active" data-zh="0 - 活动能力完全正常">0 - Fully active</option>
-                                    <option value="1" data-en="1 - Restricted but ambulatory" data-zh="1 - 受限但可行走">1 - Restricted but ambulatory</option>
-                                    <option value="2" data-en="2 - Ambulatory, capable of self-care" data-zh="2 - 可行走，能自理">2 - Ambulatory, capable of self-care</option>
-                                    <option value="3" data-en="3 - Limited self-care" data-zh="3 - 有限自理能力">3 - Limited self-care</option>
-                                    <option value="4" data-en="4 - Completely disabled" data-zh="4 - 完全残疾">4 - Completely disabled</option>
+                                <label for="surgicalHistory" data-en="Surgical History" data-zh="手术史">手术史</label>
+                                <select class="input-field" id="surgicalHistory" required>
+                                    <option value="" data-en="Please select" data-zh="请选择">请选择</option>
+                                    <option value="yes" data-en="Yes" data-zh="有">有</option>
+                                    <option value="no" data-en="No" data-zh="无">无</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="stage" data-en="Tumor Stage" data-zh="肿瘤分期">Tumor Stage</label>
-                                <select id="stage" name="stage" required>
-                                    <option value="" data-en="Select" data-zh="请选择">Select</option>
-                                    <option value="I" data-en="Stage I" data-zh="I期">Stage I</option>
-                                    <option value="II" data-en="Stage II" data-zh="II期">Stage II</option>
-                                    <option value="III" data-en="Stage III" data-zh="III期">Stage III</option>
-                                    <option value="IV" data-en="Stage IV" data-zh="IV期">Stage IV</option>
-                                </select>
+                                <label for="tumorSize" data-en="Tumor Size (cm)" data-zh="病灶大小 (厘米)">病灶大小 (厘米)</label>
+                                <input type="number" class="input-field" id="tumorSize" min="0" step="0.1" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="surgicalHistory" data-en="Surgical History" data-zh="手术史">Surgical History</label>
-                                <select id="surgicalHistory" name="surgicalHistory" required>
-                                    <option value="" data-en="Select" data-zh="请选择">Select</option>
-                                    <option value="yes" data-en="Yes" data-zh="有">Yes</option>
-                                    <option value="no" data-en="No" data-zh="无">No</option>
-                                </select>
+                                <label for="metastasisCount" data-en="Number of Metastatic Lesions" data-zh="转移灶数量">转移灶数量</label>
+                                <input type="number" class="input-field" id="metastasisCount" min="0" required>
                             </div>
                             <div class="form-group">
-                                <label for="tumorSize" data-en="Tumor Size (cm)" data-zh="病灶大小 (厘米)">Tumor Size (cm)</label>
-                                <input type="number" id="tumorSize" name="tumorSize" min="0" step="0.1" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="metastasisCount" data-en="Number of Metastatic Lesions" data-zh="转移灶数量">Number of Metastatic Lesions</label>
-                                <input type="number" id="metastasisCount" name="metastasisCount" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="metastasisSite" data-en="Metastasis Site" data-zh="转移灶部位">Metastasis Site</label>
-                                <select id="metastasisSite" name="metastasisSite" required>
-                                    <option value="" data-en="Select" data-zh="请选择">Select</option>
-                                    <option value="none" data-en="None" data-zh="无">None</option>
-                                    <option value="lymphNode" data-en="Lymph Node" data-zh="淋巴结">Lymph Node</option>
-                                    <option value="liver" data-en="Liver" data-zh="肝脏">Liver</option>
-                                    <option value="lung" data-en="Lung" data-zh="肺">Lung</option>
-                                    <option value="bone" data-en="Bone" data-zh="骨">Bone</option>
-                                    <option value="multiple" data-en="Multiple Sites" data-zh="多处部位">Multiple Sites</option>
+                                <label for="metastasisSite" data-en="Metastasis Site" data-zh="转移灶部位">转移灶部位</label>
+                                <select class="input-field" id="metastasisSite" required>
+                                    <option value="" data-en="Please select" data-zh="请选择">请选择</option>
+                                    <option value="none" data-en="None" data-zh="无">无</option>
+                                    <option value="lymphNode" data-en="Lymph Node" data-zh="淋巴结">淋巴结</option>
+                                    <option value="liver" data-en="Liver" data-zh="肝脏">肝脏</option>
+                                    <option value="lung" data-en="Lung" data-zh="肺">肺</option>
+                                    <option value="bone" data-en="Bone" data-zh="骨">骨</option>
+                                    <option value="multiple" data-en="Multiple Sites" data-zh="多处部位">多处部位</option>
                                 </select>
                             </div>
                         </div>
-
-                        <button type="submit" class="btn btn-primary btn-block" data-en="Calculate Risk" data-zh="计算风险">Calculate Risk</button>
+                        <button type="submit" class="submit-btn" data-en="Start Analysis" data-zh="立即分析">
+                            <span>立即分析</span>
+                        </button>
                     </form>
 
-                    <div id="resultSection" class="result-section">
-                        <h3 class="result-header" data-en="Prediction Result" data-zh="预测结果">Prediction Result</h3>
-                        <div class="result-gauge">
-                            <div class="result-gauge-fill" id="resultGaugeFill"></div>
+                    <div class="result-section" id="resultSection">
+                        <div class="risk-gauge">
+                            <div class="gauge-fill" id="gaugeFill"></div>
                         </div>
-                        <div class="result-value"><span id="resultValue">--</span>%</div>
-                        <p class="result-note" data-en="This prediction represents an estimated risk based on the provided parameters. Individual results may vary." data-zh="此预测结果基于提供的参数估算风险，个体结果可能存在差异。">This prediction represents an estimated risk based on the provided parameters. Individual results may vary.</p>
-                    </div>
-
-                    <div class="disclaimer">
-                        <p data-en="Disclaimer: This tool is currently in testing phase and provides random prediction values. It is not intended for clinical use or medical decision-making." data-zh="免责声明：该工具目前处于测试阶段，提供随机预测值。不适用于临床应用或医疗决策。">Disclaimer: This tool is currently in testing phase and provides random prediction values. It is not intended for clinical use or medical decision-making.</p>
+                        <div class="risk-percentage"><span id="riskValue">0</span>%</div>
+                        <p class="result-note" data-en="* This result is for reference only, please consult professional medical advice" data-zh="* 本结果仅供参考，具体诊疗请咨询专业医师">* 本结果仅供参考，具体诊疗请咨询专业医师</p>
                     </div>
                 </div>
             </div>
@@ -370,58 +360,74 @@ prediction.html
     <footer>
         <div class="container">
             <div class="footer-content">
-                <p>&copy; 2025 <span data-en="Medical Research Institute" data-zh="郑州大学 食管癌预测研究团队">Medical Research Institute</span>. <span data-en="All rights reserved." data-zh="版权所有。">All rights reserved.</span></p>
-                <p data-en="For research purposes only" data-zh="仅用于研究目的">For research purposes only</p>
+                <p data-en="© 2024 Medical AI Research Center. All rights reserved." data-zh="© 2025 郑州大学医疗人工智能研究团队 版权所有">© 2025 郑州大学 医疗人工智能研究中心 版权所有</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Language switcher functionality
+        // 默认中文设置
+        let currentLang = 'zh';
+        
+        // 语言切换功能
         const langSwitch = document.getElementById('langSwitch');
-        let currentLang = 'en';
+        langSwitch.addEventListener('click', toggleLanguage);
 
-        langSwitch.addEventListener('click', () => {
-            currentLang = currentLang === 'en' ? 'zh' : 'en';
-            updateLanguage();
-        });
-
-        function updateLanguage() {
-            const elementsWithTranslation = document.querySelectorAll('[data-en]');
-            elementsWithTranslation.forEach(el => {
-                el.textContent = el.getAttribute(`data-${currentLang}`);
-            });
-
-            // Update language switch text
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updatePageLanguage();
             langSwitch.textContent = langSwitch.getAttribute(`data-${currentLang}`);
-
-            // Update document title
-            document.title = currentLang === 'en' ? 
-                'Esophageal Cancer Prediction' : 
-                '食管癌预测';
         }
 
-        // Form submission and prediction functionality
-        const predictionForm = document.getElementById('predictionForm');
-        const resultSection = document.getElementById('resultSection');
-        const resultValue = document.getElementById('resultValue');
-        const resultGaugeFill = document.getElementById('resultGaugeFill');
+        function updatePageLanguage() {
+            document.querySelectorAll('[data-zh]').forEach(element => {
+                const key = currentLang === 'zh' ? 'zh' : 'en';
+                element.textContent = element.getAttribute(`data-${key}`);
+            });
+        }
 
-        predictionForm.addEventListener('submit', (e) => {
+        // 表单提交处理
+        const form = document.getElementById('predictionForm');
+        const resultSection = document.getElementById('resultSection');
+        const riskValue = document.getElementById('riskValue');
+        const gaugeFill = document.getElementById('gaugeFill');
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Generate random prediction (for testing phase)
-            const randomPrediction = Math.floor(Math.random() * 101);
+            // 显示遮罩层
+            document.getElementById('overlay').style.display = 'block';
             
-            // Update result display
-            resultValue.textContent = randomPrediction;
-            resultGaugeFill.style.width = `${randomPrediction}%`;
+            // 模拟分析延迟
+            await new Promise(resolve => setTimeout(resolve, 800));
             
-            // Show result section with animation
-            resultSection.style.display = 'block';
+            // 生成随机结果（演示用）
+            const randomRisk = Math.floor(Math.random() * 81) + 10;
+            riskValue.textContent = randomRisk;
+            gaugeFill.style.width = `${randomRisk}%`;
             
-            // Scroll to result
-            resultSection.scrollIntoView({ behavior: 'smooth' });
+            // 显示结果
+            resultSection.classList.add('active');
+            document.getElementById('overlay').style.display = 'none';
+            
+            // 结果动画
+            animateValue(0, randomRisk, 1500);
+        });
+
+        function animateValue(start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                riskValue.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        }
+
+        // 初始化页面语言
+        window.addEventListener('DOMContentLoaded', () => {
+            updatePageLanguage();
         });
     </script>
 </body>
