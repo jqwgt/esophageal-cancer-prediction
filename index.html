@@ -1,4 +1,4 @@
--prediction.html
+prediction.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,9 +29,23 @@
             font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
-            background-color: #f8f9fa;
+            background: url('bg.jpg') no-repeat center center fixed; 
+            background-size: cover;
             padding: 0;
             margin: 0;
+            position: relative;
+        }
+
+        /* 添加背景遮罩，以确保内容可读性 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.85); /* 半透明白色遮罩 */
+            z-index: -1;
         }
 
         header {
